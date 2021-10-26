@@ -1,24 +1,25 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+curl action to GET all transactions: curl http://localhost:3000/transactions
 
-Things you may want to cover:
+curl action for POSTING a transaction: curl -d "transaction[payer]=CHEWY" -d "transaction[points]=3000" -d "transaction[date]=2021-08-18T15:30:33" http://localhost:3000/transactions
 
-* Ruby version
+curl action to POST spending points: curl -d "points"=100 http://localhost:3000/spend-points
 
-* System dependencies
+- Ruby version
 
-* Configuration
+- System dependencies
 
-* Database creation
+- Configuration
 
-* Database initialization
+- Database creation
 
-* How to run the test suite
+- Database initialization
 
-* Services (job queues, cache servers, search engines, etc.)
+- How to run the test suite
 
-* Deployment instructions
+- Services (job queues, cache servers, search engines, etc.)
 
-* ...
+- Deployment instructions
+
+- ...
