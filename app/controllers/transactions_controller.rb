@@ -1,7 +1,7 @@
 class TransactionsController < ApplicationController
 
     def index 
-        @transactions = Transaction.all
+        @transactions = Transaction.all.order(:date)
         render json: @transactions
     end
 
@@ -28,24 +28,35 @@ class TransactionsController < ApplicationController
             if points == 0
                 break
             end 
-            @transaction = Transaction.find_by id: ordered[i].id
-            # if you have more points than in the transaction - update transaction points to 0
-                # and update points minus the points we've used
-                # add obj to spent**
-            # else - update transaction with trans.points - points
-                # points is now 0
-                # push obj of call into spent**
-            if points >= @transaction.points
-                points = points - @transaction.points
-                @transaction.update(@transaction, :points => 0)
+                @transaction = Transaction.find_by id: ordered[i].id
+                # byebug
+                # if you have more points than in the transaction:
+                    # and update points minus the points we've used
+                    # update transaction points to 0
+                    # add obj to spent**
+                # else - update transaction with trans.points - points
+                    # points is now 0
+                    # push obj of call into spent**
+            if @transaction.points >= 0
+                if points > @transaction.points
+                    points = points - @transaction.points
+                    spent[@transaction.payer] = -1 * @transaction.points
+                    @transaction.update(:points => 0)
+                else 
+                    remaining = @transaction.points - points
+                    spent[@transaction.payer] = -1 * points
+                    points = 0
+                    @transaction.update(:points => remaining)
+                end
             else 
-                remaining = @transaction.points - points
-                points = 0
-                @transaction.update(@transaction, :points => remaining)
+                # add the -points to points
+                points = points - @transaction.points
+                # update spent by subtracting (adding) neg points
+                spent[@transaction.payer] = spent[@transaction.payer] -= @transaction.points
+                @transaction.update(:points => 0)
             end
             i+= 1
         end
-        byebug
         render json: spent
     end
 
